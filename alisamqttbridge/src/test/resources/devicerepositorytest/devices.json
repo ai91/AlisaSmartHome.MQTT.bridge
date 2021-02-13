@@ -1,0 +1,28 @@
+{
+	"devices": [
+		{
+            "id": "id1",
+            "name": "light1",
+            "type": "devices.types.light",
+			
+			"rules": [
+				{
+					"alisa": { "capability": "devices.capabilities.on_off", "instance": "on" },
+					"mqtt": { "state": "house/outlet/bedroom/state", "commands": "house/outlet/bedroom/command" },
+					"valueMapsToAlisa": [
+						{ "type": "value", "from": "1", "to": "true" },
+						{ "type": "value", "from": "0", "to": "false" }
+					],
+					"valueMapsToMqtt": [ 
+						{ "type": "value", "from": "true", "to": "1" },
+						{ "type": "value", "from": "false", "to": "0" }
+					]
+				},
+				{
+					"alisa": { "property": "devices.properties.float", "instance": "temperature" },
+					"mqtt": { "state": "house/outlet/bedroom/statetemp" }
+				}
+			]
+		}
+	]
+}

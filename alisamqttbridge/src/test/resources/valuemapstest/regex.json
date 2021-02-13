@@ -1,0 +1,1 @@
+{ "type": "regex", "search": "^cmd([0-4]+)$",  "replace": "mva$1" }

@@ -1,0 +1,9 @@
+logging:
+  level:
+    root: "error"
+    by.ibn: "trace"
+    org.springframework.security: "trace"
+
+server:
+  servlet:
+    context-path: "/v1.0"

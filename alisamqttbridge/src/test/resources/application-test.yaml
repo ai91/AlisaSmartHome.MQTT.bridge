@@ -1,0 +1,17 @@
+devicespathprefix: "classpath:"
+devicespath: ""
+
+mqtt:
+  hostname: 127.0.0.1
+  port: 1883
+  clientId: AlisaMQTTBridge
+  automaticReconnect: true
+  cleanSession: true
+  connectionTimeout: 10
+
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: https://127.0.0.1/auth/.well-known/openid-configuration/jwks

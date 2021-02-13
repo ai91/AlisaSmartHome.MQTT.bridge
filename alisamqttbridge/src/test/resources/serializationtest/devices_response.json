@@ -1,0 +1,59 @@
+{
+    "request_id": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
+    "payload": {
+        "user_id": "Misha-01-super-545",
+        "devices": [{
+                "id": "abc-123",
+                "name": "лампa",
+                "description": "цветная лампа",
+                "room": "спальня",
+                "type": "devices.types.light",
+                "capabilities": [{
+                        "type": "devices.capabilities.range",
+                        "retrievable": true,
+                        "parameters": {
+                            "instance": "brightness",
+                            "unit": "unit.percent",
+                            "range": {
+                                "min": 0,
+                                "max": 100,
+                                "precision": 10
+                            }
+                        }
+                    },
+                    {
+                        "type": "devices.capabilities.on_off"
+                    },
+                    {
+                        "type": "devices.capabilities.color_setting",
+                        "parameters": {
+                            "color_model": "hsv",
+                            "temperature_k": {
+                                "min": 2700,
+                                "max": 9000,
+                                "precision": 1
+                            }
+                        }
+                    }
+                ],
+                "device_info": {
+                    "manufacturer": "Provider2",
+                    "model": "hue g11",
+                    "hw_version": "1.2",
+                    "sw_version": "5.4"
+                },
+                "custom_data": {
+                  "foo": 1,
+                  "bar": "two",
+                  "baz": false,
+                  "qux": [1, "two", false],
+                  "quux": {
+                    "quuz": {
+                      "corge": []
+                    }
+                  }
+                }
+            }
+        ]
+    }
+}
