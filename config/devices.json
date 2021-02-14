@@ -1,0 +1,117 @@
+{
+	"devices": [
+	
+		{
+			"id": "light_kitchen",
+			"name": "Свет на кухне",
+			"description": "Лампы на кухне",
+			"room": "кухня",
+			"device_info": {
+				"manufacturer": "IBN",
+				"model": "Dee",
+				"hw_version": "1.0",
+				"sw_version": "1.0"
+			},
+			"type": "devices.types.light",
+			"capabilities": [
+				{
+					"type": "devices.capabilities.on_off",
+					"retrievable": true,
+					"reportable": false,
+					"rules": [
+						{
+							"alisa": { "instance": "on" },
+							"mqtt": { "state": "house/light/kitchen/sta", "commands": "house/light/kitchen/cmd" },
+							"valueMapsToAlisa": [
+								{ "type": "value", "from": "1", "to": "true" },
+								{ "type": "value", "from": "1.", "to": "true" },
+								{ "type": "value", "from": "0.", "to": "false" },
+								{ "type": "value", "from": "0", "to": "false" }
+							],
+							"valueMapsToMqtt": [ 
+								{ "type": "value", "from": "true", "to": "1" },
+								{ "type": "value", "from": "false", "to": "0" }
+							]
+						}
+					]
+				}
+			],
+			"properties": []
+		},
+		
+		{
+			"id": "blinds_kitchen",
+			"name": "Ролета на кухне",
+			"description": "Ролета на кухне",
+			"room": "кухня",
+			"device_info": {
+				"manufacturer": "IBN",
+				"model": "Dorfl",
+				"hw_version": "1.0",
+				"sw_version": "1.0"
+			},
+			"type": "devices.types.openable.curtain",
+			"capabilities": [
+				{
+					"type": "devices.capabilities.range",
+					"retrievable": true,
+					"reportable": false,
+					"parameters": {
+						"instance": "open",
+						"random_access": true,
+						"range": {
+							"max": 100,
+							"min": 0,
+							"precision": 10
+						},
+						"unit": "unit.percent"
+					},
+					"rules": [
+						{
+							"alisa": { "instance": "open" },
+							"mqtt": { "state": "house/blinds/kitchen/pos", "commands": "house/blinds/kitchen/cmd" },
+							"valueMapsToAlisa": [
+								{ "type": "linearRange", "fromMin": 13, "fromMax": 0, "toMin": 0, "toMax": 100, "rounded": true } 
+							],
+							"valueMapsToMqtt": [ 
+								{ "type": "regex", "search": "^[0-4](\\.[0-9]+)?$",  "replace": "mva13" },
+								{ "type": "regex", "search": "^[5-9](\\.[0-9]+)?$",  "replace": "mva12" },
+								{ "type": "regex", "search": "^1[0-9](\\.[0-9]+)?$", "replace": "mva11" },
+								{ "type": "regex", "search": "^2[0-9](\\.[0-9]+)?$", "replace": "mva10" },
+								{ "type": "regex", "search": "^3[0-9](\\.[0-9]+)?$", "replace": "mva9" },
+								{ "type": "regex", "search": "^4[0-9](\\.[0-9]+)?$", "replace": "mva8" },
+								{ "type": "regex", "search": "^5[0-9](\\.[0-9]+)?$", "replace": "mva7" },
+								{ "type": "regex", "search": "^6[0-9](\\.[0-9]+)?$", "replace": "mva6" },
+								{ "type": "regex", "search": "^7[0-9](\\.[0-9]+)?$", "replace": "mva5" },
+								{ "type": "regex", "search": "^8[0-9](\\.[0-9]+)?$", "replace": "mva4" },
+								{ "type": "regex", "search": "^9[0-9](\\.[0-9]+)?$", "replace": "mva3" },
+								{ "type": "regex", "search": "^100(\\.[0-9]+)?$",    "replace": "mva-5" }
+							]
+						}
+					]
+				},
+				{
+					"type": "devices.capabilities.on_off",
+					"retrievable": true,
+					"reportable": false,
+					"rules": [
+						{
+							"alisa": { "instance": "on" },
+							"mqtt": { "state": "house/blinds/kitchen/pos", "commands": "house/blinds/kitchen/cmd" },
+							"valueMapsToAlisa": [
+								{ "type": "regex", "search": "^1[0-9]\\.?$",  "replace": "false" },
+								{ "type": "static", "value": "true" }
+							],
+							"valueMapsToMqtt": [ 
+								{ "type": "value", "from": "true", "to": "mva-5" },
+								{ "type": "value", "from": "false", "to": "mva13" }
+							]
+						}
+					]
+				}
+			],
+			"properties": []
+		}
+		
+	]
+}
