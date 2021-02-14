@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,7 +25,7 @@ import by.ibn.alisamqttbridge.service.QueryService;
 @RestController
 public class QueryController {
 
-	Logger log = LoggerFactory.getLogger(QueryController.class);
+	private Logger log = LoggerFactory.getLogger(QueryController.class);
 
 	@Autowired
 	private QueryService service;
@@ -34,13 +35,15 @@ public class QueryController {
 			method = RequestMethod.POST, 
 			consumes = MediaType.APPLICATION_JSON_VALUE,
 			produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Response> getDevices(@RequestBody Request request) {
+	public ResponseEntity<Response> getDevices(
+			@RequestHeader("X-Request-Id") String requestId,
+			@RequestBody Request request) {
 
 		try {
 
-			log.trace("Processing request");
+			log.trace("Processing request {}", requestId);
 
-			Response response = service.getStates(request);
+			Response response = service.getStates(request, requestId);
 
 			return new ResponseEntity<Response>(response, HttpStatus.OK);
 		} catch (Exception e) {

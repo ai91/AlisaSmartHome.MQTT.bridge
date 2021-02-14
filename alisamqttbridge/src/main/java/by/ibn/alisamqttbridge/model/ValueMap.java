@@ -16,13 +16,14 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 	@Type(value = ValueMapLinearRange.class, name = "linearRange"),
 	@Type(value = ValueMapRegex.class, name = "regex"),
 	@Type(value = ValueMapStatic.class, name = "static"),
-	@Type(value = ValueMapFormula.class, name = "formula")
+	@Type(value = ValueMapFormula.class, name = "formula"),
+	@Type(value = ValueMapTemplate.class, name = "template")
 })
 public abstract class ValueMap {
 	
-	public abstract boolean isApplicable(String value);
+	public abstract boolean isApplicable(Object value);
 	
-	public abstract String map(String value);
+	public abstract String map(Object value);
 	
 	public abstract boolean isValidConfig();
 

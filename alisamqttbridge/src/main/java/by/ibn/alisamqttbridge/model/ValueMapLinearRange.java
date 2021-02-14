@@ -13,9 +13,9 @@ public class ValueMapLinearRange extends ValueMap {
 	public Boolean rounded = Boolean.TRUE;
 	
 	@Override
-	public boolean isApplicable(String value) {
+	public boolean isApplicable(Object value) {
 		try {
-			Float.parseFloat(value);
+			Float.parseFloat(value.toString());
 			return true;
 		} catch (Exception e) {
 			return false;
@@ -23,8 +23,8 @@ public class ValueMapLinearRange extends ValueMap {
 	}
 
 	@Override
-	public String map(String value) {
-		float val = Float.parseFloat(value);
+	public String map(Object value) {
+		float val = Float.parseFloat(value.toString());
 		float min = Math.min(fromMin.intValue(), fromMax.intValue());
 		float max = Math.max(fromMin.intValue(), fromMax.intValue());
 		val = Math.max(val, min);

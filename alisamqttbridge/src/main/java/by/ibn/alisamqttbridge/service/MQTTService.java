@@ -9,9 +9,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import by.ibn.alisamqttbridge.model.Device;
-import by.ibn.alisamqttbridge.model.DeviceBridgingRule;
-import by.ibn.alisamqttbridge.model.DeviceState;
+import by.ibn.alisamqttbridge.resources.Capability;
+import by.ibn.alisamqttbridge.resources.Device;
+import by.ibn.alisamqttbridge.resources.DeviceBridgingRule;
+import by.ibn.alisamqttbridge.resources.MQTTState;
+import by.ibn.alisamqttbridge.resources.Property;
 
 @Service
 public class MQTTService {
@@ -43,14 +45,32 @@ public class MQTTService {
 		
 		for (Device device: deviceRepository.getDevices()) {
 			
-			for (DeviceBridgingRule rule: device.rules) {
+			if (device.capabilities != null) {
 				
-				for (DeviceState state: device.states) {
+				for (Capability capability: device.capabilities) {
 					
-					if ((StringUtils.equals(state.capability, rule.alisa.capability) || StringUtils.equals(state.property, rule.alisa.property ))
-							&& StringUtils.equals(state.instance, rule.alisa.instance)) {
+					if (capability.rules != null) {
 						
-						subscribe(rule, state);
+						for (DeviceBridgingRule rule: capability.rules) {
+							subscribe(rule);
+						}
+						
+					}
+					
+				}
+				
+			}
+			
+			if (device.properties != null) {
+				
+				for (Property property: device.properties) {
+					
+					if (property.rules != null) {
+						
+						for (DeviceBridgingRule rule: property.rules) {
+							subscribe(rule);
+						}
+						
 					}
 					
 				}
@@ -61,25 +81,28 @@ public class MQTTService {
 		
 	}
 	
-	private void subscribe(DeviceBridgingRule deviceRule, DeviceState deviceState) {
+	private void subscribe(DeviceBridgingRule rule) {
 
-		if (StringUtils.isNotBlank(deviceRule.mqtt.state)) {
+		
+		if (StringUtils.isNotBlank(rule.mqtt.state)) {
 			
-			log.trace("Subscribing on topic {}", deviceRule.mqtt.state);
+			log.trace("Subscribing on topic {}", rule.mqtt.state);
+			
+			rule.mqttState = new MQTTState();
 			
 			try {
 				
-				mqttClient.subscribeWithResponse(deviceRule.mqtt.state, (tpic, msg) -> {
+				mqttClient.subscribeWithResponse(rule.mqtt.state, (tpic, msg) -> {
 					String value = new String(msg.getPayload());
 					log.trace("Received message on topic {}: {}", tpic, value );
 					
-					deviceState.state = value;
+					rule.mqttState.state = value;
 					
 				});
 				
 			} catch (MqttException e) {
 				
-				log.error("Error while subscribing on topic {} for instance {}", deviceRule.mqtt.state, deviceRule.alisa.instance);
+				log.error("Error while subscribing on topic {} for instance {}", rule.mqtt.state, rule.alisa.instance);
 				
 			}
 		}

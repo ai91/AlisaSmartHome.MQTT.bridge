@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.UncheckedIOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -21,12 +22,13 @@ import org.springframework.util.FileCopyUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import by.ibn.alisamqttbridge.model.Device;
-import by.ibn.alisamqttbridge.model.DeviceBridgingRule;
-import by.ibn.alisamqttbridge.model.DeviceState;
 import by.ibn.alisamqttbridge.model.DevicesConfig;
 import by.ibn.alisamqttbridge.model.ValueMap;
-import by.ibn.alisamqttbridge.resources.DeviceResource;
+import by.ibn.alisamqttbridge.resources.Capability;
+import by.ibn.alisamqttbridge.resources.Device;
+import by.ibn.alisamqttbridge.resources.DeviceBridgingRule;
+import by.ibn.alisamqttbridge.resources.MQTTState;
+import by.ibn.alisamqttbridge.resources.Property;
 
 @Component
 public class DeviceRepository {
@@ -43,9 +45,9 @@ public class DeviceRepository {
 	
 	private List<Device> devices;
 	
-	public List<DeviceResource> getDeviceResources() {
+	public List<Device> getDeviceResources() {
 		
-		return getDevices().stream().map( d -> (DeviceResource)d).collect(Collectors.toList());
+		return getDevices().stream().map( d -> (Device)d).collect(Collectors.toList());
 		
 	}
 	
@@ -77,7 +79,7 @@ public class DeviceRepository {
 		
 		Resource configResource = resourceLoader.getResource(configResourceLocation);
 		
-		try (Reader reader = new InputStreamReader(configResource.getInputStream())) {
+		try (Reader reader = new InputStreamReader(configResource.getInputStream(), StandardCharsets.UTF_8)) {
 		    String payloadStr = FileCopyUtils.copyToString(reader);
 		    DevicesConfig config = new ObjectMapper().readerFor(DevicesConfig.class).readValue(payloadStr);
 		    
@@ -91,71 +93,118 @@ public class DeviceRepository {
 		    
 		    List<Device> devices = new ArrayList<Device>();
 		    for (Device device: config.devices) {
+		    	boolean deviceMisconfigured = false;
 		    	// skip empty id's - they probably temporary disabled
 		    	if (StringUtils.isNotBlank(device.id)) {
 		    		log.trace("  device {}. Analysing...", device.id);
-		    		// skip invalid rules and initialize device states 
-		    		List<DeviceBridgingRule> rules = new ArrayList<>();
-		    		List<DeviceState> states = new ArrayList<>();
-		    		if (device.rules != null) {
+		    		
+		    		// scan capabilities and initialize device states 
+		    		if (device.capabilities != null) {
 		    			
-		    			log.trace("  found {} rule definitions. Validating and cleaning up...", device.rules.size());
+		    			log.trace("  found {} capabilities. Validating and cleaning up...", device.capabilities.size());
 		    			
-		        		for (DeviceBridgingRule rule: device.rules) {
-		        			if (rule.alisa == null || StringUtils.isBlank(rule.alisa.instance)) {
-		        				log.warn("Device {} has misconfigured rule: no alisa.instance. Skipping rule definition.", device.id);
-		        				continue;
-		        			}
-		        			if (StringUtils.isAllBlank(rule.alisa.capability, rule.alisa.property)) {
-		        				log.warn("Device {} has misconfigured rule: boath alisa.capability and alisa.property are empty. Skipping rule definition.", device.id);
-		        				continue;
-		        			}
-		        			if (rule.mqtt == null || StringUtils.isAllBlank(rule.mqtt.commands, rule.mqtt.state)) {
-		        				log.warn("Device {} has misconfigured rule: no mqtt.commands and mqtt.state are defined. Skipping rule definition.", device.id);
-		        				continue;
-		        			}
-		        			if ((rule.valueMapsToAlisa == null || rule.valueMapsToAlisa.isEmpty()) && 
-		        					(rule.valueMapsToMqtt == null || rule.valueMapsToMqtt.isEmpty())) {
-		        				log.warn("Device {} has misconfigured rule: no valueMapsToAlisa and valueMapsToMqtt are defined. Skipping rule definition.", device.id);
-		        				continue;
-		        			}
-		        			if (rule.valueMapsToAlisa != null) {
-		        				for (ValueMap valueMap: rule.valueMapsToAlisa) {
-		        					if (!valueMap.isValidConfig()) {
-		        						log.error("Device {} has misconfigured valueMapsToAlisa", device.id);
-		        						throw new RuntimeException("Misconfigured valueMapsToAlisa on " + device.id);
-		        					}
-		        				}
-		        			}
-		        			if (rule.valueMapsToMqtt != null) {
-		        				for (ValueMap valueMap: rule.valueMapsToMqtt) {
-		        					if (!valueMap.isValidConfig()) {
-		        						log.error("Device {} has misconfigured valueMapsToMqtt", device.id);
-		        						throw new RuntimeException("Misconfigured valueMapsToMqtt on " + device.id);
-		        					}
-		        				}
-		        			}
-		        			rules.add(rule);
-		        			DeviceState state = new DeviceState();
-		        			if (StringUtils.isNotBlank(rule.mqtt.state)) {
-			        			state.capability = rule.alisa.capability;
-			        			state.property = rule.alisa.property;
-			        			state.instance = rule.alisa.instance;
-			        			state.state = "";
-			        			states.add(state);
-		        			}
-		        			
-		        			log.trace("    rule added.");
-		        		}
+		    			for (Capability capability: device.capabilities) {
+
+				    		log.trace("    capability {}. Analysing...", capability.type);
+		    				
+		    				if (capability.rules != null) {
+
+				    			log.trace("    found {} rules definition(s). Validating...", capability.rules.size());
+
+				    			String instance = null;
+				        		for (DeviceBridgingRule rule: capability.rules) {
+				        			if (rule.alisa == null || StringUtils.isBlank(rule.alisa.instance)) {
+				        				log.warn("Device {} has misconfigured rule on capability {}: no alisa.instance. Device will be skipped.", device.id, capability.type);
+				        				deviceMisconfigured = true;
+				        			}
+				        			if (instance != null && !StringUtils.equals(instance, rule.alisa.instance)) {
+				        				log.warn("Device {} has misconfigured rule on capability {}: all capability's alisa.instance must be same. Device will be skipped.", device.id, capability.type);
+				        				deviceMisconfigured = true;
+				        			}
+				        			instance = rule.alisa.instance;
+				        			if (rule.mqtt == null || StringUtils.isAllBlank(rule.mqtt.commands, rule.mqtt.state)) {
+				        				log.warn("Device {} has misconfigured rule on capability {}: no mqtt.commands and mqtt.state are defined. Device will be skipped.", device.id, capability.type);
+				        				deviceMisconfigured = true;
+				        			}
+				        			if (rule.valueMapsToAlisa != null) {
+				        				for (ValueMap valueMap: rule.valueMapsToAlisa) {
+				        					if (!valueMap.isValidConfig()) {
+				        						log.error("Device {} has misconfigured valueMapsToAlisa on capability {}. See {} definition.", device.id, capability.type, valueMap.getClass().getName());
+				        						throw new RuntimeException("Misconfigured valueMapsToAlisa on " + device.id);
+				        					}
+				        				}
+				        			}
+				        			if (rule.valueMapsToMqtt != null) {
+				        				for (ValueMap valueMap: rule.valueMapsToMqtt) {
+				        					if (!valueMap.isValidConfig()) {
+				        						log.error("Device {} has misconfigured valueMapsToMqtt on capability {}. See {} definition.", device.id, capability.type, valueMap.getClass().getName());
+				        						throw new RuntimeException("Misconfigured valueMapsToMqtt on " + device.id);
+				        					}
+				        				}
+				        			}
+				        			if (!deviceMisconfigured && StringUtils.isNotBlank(rule.mqtt.state)) {
+				        				rule.mqttState = new MQTTState();
+				        			}
+				        			
+				        			log.trace("      rule added.");
+				        		}
+			    			}
+		    			}
 		    		}
-		    		if (rules.isEmpty()) {
-		    			log.warn("Device {} has no rules defined. Skipping device.", device.id  );
-		    			continue;
+		    		
+		    		// scan properties and initialize device states 
+		    		if (device.properties != null) {
+		    			
+		    			log.trace("  found {} properties. Validating and cleaning up...", device.properties.size());
+		    			
+		    			for (Property property: device.properties) {
+		    				
+		    				log.trace("    property {}. Analysing...", property.type);
+		    				
+		    				if (property.rules != null) {
+		    					
+		    					log.trace("    found {} rules definition(s). Validating...", property.rules.size());
+
+		    					String instance = null;
+		    					for (DeviceBridgingRule rule: property.rules) {
+		    						if (rule.alisa == null || StringUtils.isBlank(rule.alisa.instance)) {
+		    							log.warn("Device {} has misconfigured rule on property {}: no alisa.instance. Device will be skipped.", device.id, property.type);
+		    							deviceMisconfigured = true;
+		    						}
+				        			if (instance != null && !StringUtils.equals(instance, rule.alisa.instance)) {
+				        				log.warn("Device {} has misconfigured rule on property {}: all capability's alisa.instance must be same. Device will be skipped.", device.id, property.type);
+				        				deviceMisconfigured = true;
+				        			}
+				        			instance = rule.alisa.instance;
+		    						if (rule.mqtt == null || StringUtils.isBlank(rule.mqtt.state)) {
+		    							log.warn("Device {} has misconfigured rule on property {}: no mqtt.state is defined. Device will be skipped.", device.id, property.type);
+		    							deviceMisconfigured = true;
+		    						}
+		    						if (rule.mqtt != null && StringUtils.isNotBlank(rule.mqtt.commands)) {
+		    							log.warn("Device {} has misconfigured rule on property {}: mqtt.commands is defined, but properties are readonly by definition.", device.id, property.type);
+		    						}
+		    						if (rule.valueMapsToAlisa != null) {
+		    							for (ValueMap valueMap: rule.valueMapsToAlisa) {
+		    								if (!valueMap.isValidConfig()) {
+		    									log.error("Device {} has misconfigured valueMapsToAlisa on property {}. See {} definition.", device.id, property.type, valueMap.getClass().getName());
+		    									throw new RuntimeException("Misconfigured valueMapsToAlisa on " + device.id);
+		    								}
+		    							}
+		    						}
+		    						if (rule.valueMapsToMqtt != null) {
+		    							log.warn("Device {} has misconfigured rule on property {}: valueMapsToMqtt is defined, but properties are readonly by definition.", device.id, property.type);
+		    						}
+		    						
+		    						log.trace("      rule added.");
+		    					}
+		    				}
+		    			}
 		    		}
-		    		device.rules = rules;
-		    		device.states = states;
-		    		devices.add(device);
-        			log.trace("  device added.");
+		    		
+		    		if (!deviceMisconfigured) {
+		    			devices.add(device);
+		    			log.trace("  device added.");
+		    		}
 		    	} else {
 		    		log.trace("Skipping device without id");
 		    	}
@@ -172,8 +221,8 @@ public class DeviceRepository {
 			log.error("Nevertheless it's possible to configure another path in different ways.");
 			log.error("Few examples for /app/config/devices.json:");
 			log.error("  - Environment variable DEVICESPATH. Example: export DEVICESPATH=/app/config");
-			log.error("  - Commandline argument -DDEVICESPATH. Example: java -jar amba.jar  -DDEVICESPATH=/app/config");
-			log.error("  - Files ./application.properties or ./config/application.properties with property name 'devicespath'. Example: echo devicespath=/app/config > ./application.properties && java -jar amba.jar");
+			log.error("  - Commandline argument -DDEVICESPATH. Example: java -jar alisamqttbridge.jar  -DDEVICESPATH=/app/config");
+			log.error("  - Files ./application.properties or ./config/application.properties with property name 'devicespath'. Example: echo devicespath=/app/config > ./application.properties && java -jar alisamqttbridge.jar");
 			log.error("");
 			
 		    throw new UncheckedIOException(e);

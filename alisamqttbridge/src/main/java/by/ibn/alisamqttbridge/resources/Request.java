@@ -10,6 +10,8 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Request {
 	
-	public List<DeviceResource> devices;
+	public List<Device> devices;
+	
+	public Payload payload;
 
 }

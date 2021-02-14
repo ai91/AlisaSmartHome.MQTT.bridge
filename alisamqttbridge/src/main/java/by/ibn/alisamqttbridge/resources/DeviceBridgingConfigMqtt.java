@@ -1,4 +1,4 @@
-package by.ibn.alisamqttbridge.model;
+package by.ibn.alisamqttbridge.resources;
 
 public class DeviceBridgingConfigMqtt {
 	

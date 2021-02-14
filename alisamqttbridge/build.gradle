@@ -20,6 +20,7 @@ dependencies {
 	implementation 'org.springframework.security.oauth.boot:spring-security-oauth2-autoconfigure:2.4.2'
 	
 	implementation 'org.apache.commons:commons-lang3:3.11'
+	implementation 'org.apache.commons:commons-text:1.9'
 	implementation 'org.springframework.integration:spring-integration-mqtt:5.4.3'
 	
 	implementation 'net.objecthunter:exp4j:0.4.8'

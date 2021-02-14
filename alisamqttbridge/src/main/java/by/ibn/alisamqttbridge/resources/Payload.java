@@ -15,6 +15,6 @@ public class Payload {
 	public String userId;
 	
 	@JsonProperty("devices")
-	public List<DeviceResource> devices;
+	public List<Device> devices;
 
 }

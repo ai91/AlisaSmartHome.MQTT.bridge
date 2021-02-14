@@ -17,8 +17,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 
 import by.ibn.alisamqttbridge.MQTTConfiguration;
-import by.ibn.alisamqttbridge.model.Device;
-import by.ibn.alisamqttbridge.resources.DeviceResource;
+import by.ibn.alisamqttbridge.resources.Device;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -36,11 +35,12 @@ class DeviceRepositoryTest {
 	@Test
 	void loadConfig() {
 		
-		List<DeviceResource> devices = testee.getDeviceResources();
+		List<Device> devices = testee.getDeviceResources();
 		
 		assertNotNull(devices);
 		assertEquals(1, devices.size());
 		assertEquals("id1", devices.get(0).id);
+		assertEquals("лампочка", devices.get(0).name);
 		
 	}
 

@@ -18,10 +18,39 @@
                             "max": 100,
                             "precision": 10
                         }
-                    }
+                    },
+					"rules": [
+						{
+							"alisa": { "instance": "brightness" },
+							"mqtt": { "state": "house/outlet/bedroom/statebrightness", "commands": "house/outlet/bedroom/commandbrightness" },
+							"valueMapsToAlisa": [
+								{ "type": "linearRange", "fromMin": 0, "fromMax": 1, "toMin": 0, "toMax": 100, "rounded": true }
+							],
+							"valueMapsToMqtt": [ 
+								{ "type": "linearRange", "fromMin": 0, "fromMax": 100, "toMin": 0, "toMax": 1 }
+							]
+						}
+					]
+                    
+                    
                 },
                 {
-                    "type": "devices.capabilities.on_off"
+                    "type": "devices.capabilities.on_off",
+					"rules": [
+						{
+							"alisa": { "instance": "on" },
+							"mqtt": { "state": "house/outlet/bedroom/state", "commands": "house/outlet/bedroom/command" },
+							"valueMapsToAlisa": [
+								{ "type": "value", "from": "1", "to": "true" },
+								{ "type": "value", "from": "0", "to": "false" }
+							],
+							"valueMapsToMqtt": [ 
+								{ "type": "value", "from": "true", "to": "1" },
+								{ "type": "value", "from": "false", "to": "0" }
+							]
+						}
+					]
+					
                 },
                 {
                     "type": "devices.capabilities.color_setting",
@@ -32,7 +61,32 @@
                             "max": 9000,
                             "precision": 1
                         }
-                    }
+                    },
+					"rules": [
+						{
+							"alisa": { "instance": "hsv", "subvalue": "h" },
+							"mqtt": { "state": "house/outlet/bedroom/statecolor" },
+							"valueMapsToAlisa": [ { "type": "regex", "search": "^([0-9]+),([0-9]+),([0-9]+)$",  "replace": "$1" } ]
+						},
+						{
+							"alisa": { "instance": "hsv", "subvalue": "s" },
+							"mqtt": { "state": "house/outlet/bedroom/statecolor" },
+							"valueMapsToAlisa": [ { "type": "regex", "search": "^([0-9]+),([0-9]+),([0-9]+)$",  "replace": "$2" } ]
+						},
+						{
+							"alisa": { "instance": "hsv", "subvalue": "v" },
+							"mqtt": { "state": "house/outlet/bedroom/statecolor" },
+							"valueMapsToAlisa": [ { "type": "regex", "search": "^([0-9]+),([0-9]+),([0-9]+)$",  "replace": "$3" } ]
+						},
+						{
+							"alisa": { "instance": "hsv" },
+							"mqtt": { "commands": "house/outlet/bedroom/commandcolor" },
+							"valueMapsToMqtt": [ 
+								{ "type": "template", "template": "${h},${s},${v}" }
+							]
+						}
+					]
+					
                 }
             ],
             "properties": [
@@ -42,7 +96,13 @@
                     "parameters": {
                         "instance": "temperature",
                         "unit": "unit.temperature.celsius"
-                    }
+                    },
+					"rules": [ 
+						{
+							"alisa": { "instance": "temperature" },
+							"mqtt": { "state": "house/outlet/bedroom/statetemp" }
+						}
+					]
 	            }
             ],
             "device_info": {
@@ -61,26 +121,7 @@
                   "corge": []
                 }
               }
-            },
-			
-			"rules": [
-				{
-					"alisa": { "capability": "devices.capabilities.on_off", "instance": "on" },
-					"mqtt": { "state": "house/outlet/bedroom/state", "commands": "house/outlet/bedroom/command" },
-					"valueMapsToAlisa": [
-						{ "type": "value", "from": "1", "to": "true" },
-						{ "type": "value", "from": "0", "to": "false" }
-					],
-					"valueMapsToMqtt": [ 
-						{ "type": "value", "from": "true", "to": "1" },
-						{ "type": "value", "from": "false", "to": "0" }
-					]
-				},
-				{
-					"alisa": { "property": "devices.properties.float", "instance": "temperature" },
-					"mqtt": { "state": "house/outlet/bedroom/statetemp" }
-				}
-			]
+            }
 		}
 	]
 }

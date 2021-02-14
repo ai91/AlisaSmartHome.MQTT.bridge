@@ -10,12 +10,12 @@ public class ValueMapStatic extends ValueMap {
 	public String value;
 	
 	@Override
-	public boolean isApplicable(String value) {
+	public boolean isApplicable(Object value) {
 		return true;
 	}
 
 	@Override
-	public String map(String value) {
+	public String map(Object value) {
 		return this.value;
 	}
 

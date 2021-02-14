@@ -39,19 +39,22 @@ class DevicesControllerTest {
 	@Test
 	void testGet() throws Exception {
 
+		String expectedRequestId = "_requestid";
+		
 		Response expectedResponse = new Response();
-		expectedResponse.requestId = "_requestid";
-		Mockito.when(service.getDevices()).thenReturn(expectedResponse);
+		expectedResponse.requestId = expectedRequestId;
+		Mockito.when(service.getDevices(Mockito.eq(expectedRequestId))).thenReturn(expectedResponse);
 		
 		mvc
 		.perform(MockMvcRequestBuilders.get("/user/devices")
+				.header("X-Request-Id", expectedRequestId)
 				.with( SecurityMockMvcRequestPostProcessors.jwt().authorities(new SimpleGrantedAuthority("SCOPE_api")) )
 				.accept(MediaType.APPLICATION_JSON) 
 		)
 		.andExpect(MockMvcResultMatchers.status().isOk())
 		.andExpect(MockMvcResultMatchers.content().json("{\"request_id\":\"_requestid\"}}"));
 
-		Mockito.verify(service, Mockito.times(1)).getDevices();
+		Mockito.verify(service, Mockito.times(1)).getDevices(Mockito.any());
 
 	}
 
@@ -60,12 +63,13 @@ class DevicesControllerTest {
 		
 		mvc
 		.perform(MockMvcRequestBuilders.get("/user/devices")
+				.header("X-Request-Id", "_requestId")
 				.with( SecurityMockMvcRequestPostProcessors.jwt().authorities(new SimpleGrantedAuthority("SCOPE_read")) )
 				.accept(MediaType.APPLICATION_JSON) 
 		)
 		.andExpect(MockMvcResultMatchers.status().isForbidden());
 		
-		Mockito.verify(service, Mockito.times(0)).getDevices();
+		Mockito.verify(service, Mockito.times(0)).getDevices(Mockito.any());
 		
 	}
 	
@@ -74,12 +78,13 @@ class DevicesControllerTest {
 		
 		mvc
 		.perform(MockMvcRequestBuilders.get("/user/devices")
+				.header("X-Request-Id", "_requestId")
 				.with( SecurityMockMvcRequestPostProcessors.jwt() )
 				.accept(MediaType.APPLICATION_JSON)
 		)
 		.andExpect(MockMvcResultMatchers.status().isForbidden());
 		
-		Mockito.verify(service, Mockito.times(0)).getDevices();
+		Mockito.verify(service, Mockito.times(0)).getDevices(Mockito.any());
 		
 	}
 	
@@ -88,27 +93,29 @@ class DevicesControllerTest {
 		
 		mvc
 		.perform(MockMvcRequestBuilders.get("/user/devices")
+				.header("X-Request-Id", "_requestId")
 				.accept(MediaType.APPLICATION_JSON)
 		)
 		.andExpect(MockMvcResultMatchers.status().isUnauthorized());
 		
-		Mockito.verify(service, Mockito.times(0)).getDevices();
+		Mockito.verify(service, Mockito.times(0)).getDevices(Mockito.any());
 		
 	}
 
 	@Test
 	void testInternalServerError() throws Exception {
 
-		Mockito.when(service.getDevices()).thenThrow(new RuntimeException("boa"));
+		Mockito.when(service.getDevices(Mockito.any())).thenThrow(new RuntimeException("boa"));
 		
 		mvc
 		.perform(MockMvcRequestBuilders.get("/user/devices")
+				.header("X-Request-Id", "_requestId")
 				.with( SecurityMockMvcRequestPostProcessors.jwt().authorities(new SimpleGrantedAuthority("SCOPE_api")) )
 				.accept(MediaType.APPLICATION_JSON)
 		)
 		.andExpect(MockMvcResultMatchers.status().isInternalServerError());
 
-		Mockito.verify(service, Mockito.times(1)).getDevices();
+		Mockito.verify(service, Mockito.times(1)).getDevices(Mockito.any());
 
 	}
 

@@ -12,12 +12,12 @@ public class ValueMapValue extends ValueMap {
 	public String to;
 
 	@Override
-	public boolean isApplicable(String value) {
-		return StringUtils.equalsIgnoreCase(value, from);
+	public boolean isApplicable(Object value) {
+		return StringUtils.equalsIgnoreCase(value.toString(), from);
 	}
 
 	@Override
-	public String map(String value) {
+	public String map(Object value) {
 		return to;
 	}
 

@@ -13,13 +13,13 @@ public class ValueMapRegex extends ValueMap {
 	public String replace;
 	
 	@Override
-	public boolean isApplicable(String value) {
-		return Pattern.matches(search, value);
+	public boolean isApplicable(Object value) {
+		return Pattern.matches(search, value.toString());
 	}
 
 	@Override
-	public String map(String value) {
-		return value.replaceAll(search, replace);
+	public String map(Object value) {
+		return value.toString().replaceAll(search, replace);
 	}
 
 	@Override
