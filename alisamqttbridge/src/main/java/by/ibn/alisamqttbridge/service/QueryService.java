@@ -70,43 +70,48 @@ public class QueryService {
 			for (Capability capability: device.capabilities) {
 				if (capability.rules != null) {
 					
-					Capability capabilityStateReport = new Capability();
-					capabilityStateReport.type = capability.type;
-					capabilityStateReport.state = new State();
-					
-					Object alisaValue = null;
 					for (DeviceBridgingRule rule: capability.rules) {
+						Capability capabilityStateReport = new Capability();
+						capabilityStateReport.type = capability.type;
+						capabilityStateReport.state = new State();
+						
+						Object alisaValue = null;
 						
 						capabilityStateReport.state.instance = rule.alisa.instance;
 						alisaValue = getAlisaValue(alisaValue, rule);
 						
+						if (alisaValue != null) {
+							capabilityStateReport.state.value = alisaValue;
+							deviceStateReport.capabilities.add(capabilityStateReport);
+							
+							log.trace("    sending report on capability: {}, sate: {} -> {}", rule.alisa.instance, rule.mqttState.state, alisaValue);
+						} else {
+							log.trace("    no report on capability: {}, mqtt sate: {}", rule.alisa.instance, rule.mqttState.state);
+						}
 					}
 					
-					if (alisaValue != null) {
-						capabilityStateReport.state.value = alisaValue;
-						deviceStateReport.capabilities.add(capabilityStateReport);
-					}
 				}
 			}
 			
 			for (Property property: device.properties) {
 				if (property.rules != null) {
 					
-					Property propertyStateReport = new Property();
-					propertyStateReport.type = property.type;
-					propertyStateReport.state = new State();
-					
-					Object alisaValue = null;
 					for (DeviceBridgingRule rule: property.rules) {
+						Property propertyStateReport = new Property();
+						propertyStateReport.type = property.type;
+						propertyStateReport.state = new State();
+						
+						Object alisaValue = null;
 						
 						propertyStateReport.state.instance = rule.alisa.instance;
 						alisaValue = getAlisaValue(alisaValue, rule);
 						
-					}
-					
-					if (alisaValue != null) {
-						propertyStateReport.state.value = alisaValue;
-						deviceStateReport.properties.add(propertyStateReport);
+						if (alisaValue != null) {
+							propertyStateReport.state.value = alisaValue;
+							deviceStateReport.properties.add(propertyStateReport);
+							
+							log.trace("    sending report on property: {}, sate: {} -> {}", rule.alisa.instance, rule.mqttState.state, alisaValue);
+						}
 					}
 				}
 			}

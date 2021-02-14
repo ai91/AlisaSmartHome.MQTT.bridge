@@ -97,7 +97,7 @@ public class ActionService {
 										}
 										deviceStateReport.capabilities.add(capabilityReport);
 										sentAtLeastOne = true;
-										log.trace("  successfully sent message: {} <- {}", rule.mqtt.commands, mqttValue);
+										log.trace("  successfully sent message: {} -> {}", mqttValue, rule.mqtt.commands);
 										break;
 									}
 								}
@@ -108,20 +108,24 @@ public class ActionService {
 						}
 					}
 					
-					if (!sentAtLeastOne) {
-						log.warn("  device found, but capability is not supported: {}, {}", capabilityRequest.type, capabilityRequest.state.instance);
-						Capability capabilityReport = new Capability();
-						capabilityReport.type = capabilityRequest.type;
-						capabilityReport.state = new State();
-						capabilityReport.state.instance = capabilityRequest.state.instance;
-						capabilityReport.state.actionResult = new ActionResult();
-						capabilityReport.state.actionResult.status = "ERROR";
-						capabilityReport.state.actionResult.errorCode = "INVALID_ACTION";
-						capabilityReport.state.actionResult.errorMessage = "Свойство не поддерживается";
-						deviceStateReport.capabilities.add(capabilityReport);
-					}
-					
 				}
+				
+				if (!sentAtLeastOne) {
+					log.warn("  device found, but capability is not supported or value didn't match. Device: {}, capability: {}, instance: {}, value: {}", device.id, capabilityRequest.type, capabilityRequest.state.instance, capabilityRequest.state.value.toString());
+					Capability capabilityReport = new Capability();
+					capabilityReport.type = capabilityRequest.type;
+					capabilityReport.state = new State();
+					capabilityReport.state.instance = capabilityRequest.state.instance;
+					capabilityReport.state.actionResult = new ActionResult();
+					capabilityReport.state.actionResult.status = "ERROR";
+					capabilityReport.state.actionResult.errorCode = "INVALID_ACTION";
+					capabilityReport.state.actionResult.errorMessage = "Свойство не поддерживается";
+					if (deviceStateReport.capabilities == null) {
+						deviceStateReport.capabilities = new ArrayList<>();
+					}
+					deviceStateReport.capabilities.add(capabilityReport);
+				}
+				
 			}
 			
 			

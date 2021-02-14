@@ -1,5 +1,10 @@
 package by.ibn.alisamqttbridge.service;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.paho.client.mqttv3.IMqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
@@ -19,6 +24,8 @@ import by.ibn.alisamqttbridge.resources.Property;
 public class MQTTService {
 
 	private Logger log = LoggerFactory.getLogger(MQTTService.class);
+	
+	private Map<String, List<MQTTState>> subscriptions = new HashMap<>();
 	
 	@Autowired
 	private IMqttClient mqttClient;
@@ -84,27 +91,49 @@ public class MQTTService {
 	private void subscribe(DeviceBridgingRule rule) {
 
 		
-		if (StringUtils.isNotBlank(rule.mqtt.state)) {
+		String topic = rule.mqtt.state;
+		
+		if (StringUtils.isNotBlank(topic)) {
 			
-			log.trace("Subscribing on topic {}", rule.mqtt.state);
 			
 			rule.mqttState = new MQTTState();
-			
-			try {
+			List<MQTTState> stateListeners = subscriptions.get(topic);
+			if (stateListeners == null) {
 				
-				mqttClient.subscribeWithResponse(rule.mqtt.state, (tpic, msg) -> {
-					String value = new String(msg.getPayload());
-					log.trace("Received message on topic {}: {}", tpic, value );
+				log.trace("Subscribing on topic {}", topic);
+				
+				stateListeners = new ArrayList<>();
+				subscriptions.put(topic, stateListeners);
+				
+				stateListeners.add(rule.mqttState);
+				
+				try {
 					
-					rule.mqttState.state = value;
+					mqttClient.subscribeWithResponse(topic, (tpic, msg) -> {
+						String value = new String(msg.getPayload());
+						log.trace("Received message on topic {}: {}", tpic, value );
+						
+						for(MQTTState mqttState: subscriptions.get(topic)) {
+							mqttState.state = value;
+						}
+						
+					});
 					
-				});
+				} catch (MqttException e) {
+					
+					log.error("Error while subscribing on topic {} for instance {}", topic, rule.alisa.instance);
+					
+				}
 				
-			} catch (MqttException e) {
+			} else if (stateListeners.size() > 0) {
 				
-				log.error("Error while subscribing on topic {} for instance {}", rule.mqtt.state, rule.alisa.instance);
+				log.trace("Already subscribed on topic {}. Reusing existing subscription.", topic);
 				
+				// clone previously received state
+				rule.mqttState.state = stateListeners.get(0).state;
+				stateListeners.add(rule.mqttState);
 			}
+			
 		}
 	}	
 }
