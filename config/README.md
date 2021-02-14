@@ -26,51 +26,51 @@ This node may contain following nodes:
 
 ```json
 ...
-                "state": {
-                    "instance": "hsv",
-                    "value": {
-                        "h": 255,
-                        "s": 50,
-                        "v": 100
-                    }
-                }
+"state": {
+    "instance": "hsv",
+    "value": {
+        "h": 255,
+        "s": 50,
+        "v": 100
+    }
+}
 ...
 ```
 
 to achieve that, it's necessary to define 3 rules, one per subvalue:
 
 ```json
-                {
-                    "type": "devices.capabilities.color_setting",
-                    "parameters": {
-                        "color_model": "hsv",
-                        "temperature_k": { "min": 2700, "max": 9000, "precision": 1 }
-                    },
-					"rules": [
-						{
-							"alisa": { "instance": "hsv", "subvalue": "h" },
-							"mqtt": { "state": "house/outlet/bedroom/statecolor" },
-							"valueMapsToAlisa": [ { "type": "regex", "search": "^([0-9]+),([0-9]+),([0-9]+)$",  "replace": "$1" } ]
-						},
-						{
-							"alisa": { "instance": "hsv", "subvalue": "s" },
-							"mqtt": { "state": "house/outlet/bedroom/statecolor" },
-							"valueMapsToAlisa": [ { "type": "regex", "search": "^([0-9]+),([0-9]+),([0-9]+)$",  "replace": "$2" } ]
-						},
-						{
-							"alisa": { "instance": "hsv", "subvalue": "v" },
-							"mqtt": { "state": "house/outlet/bedroom/statecolor" },
-							"valueMapsToAlisa": [ { "type": "regex", "search": "^([0-9]+),([0-9]+),([0-9]+)$",  "replace": "$3" } ]
-						},
-						{
-							"alisa": { "instance": "hsv" },
-							"mqtt": { "commands": "house/outlet/bedroom/commandcolor" },
-							"valueMapsToMqtt": [ 
-								{ "type": "template", "template": "${h},${s},${v}" }
-							]
-						}
-					]
-                }
+{
+    "type": "devices.capabilities.color_setting",
+    "parameters": {
+        "color_model": "hsv",
+        "temperature_k": { "min": 2700, "max": 9000, "precision": 1 }
+    },
+   "rules": [
+     {
+        "alisa": { "instance": "hsv", "subvalue": "h" },
+        "mqtt": { "state": "house/outlet/bedroom/statecolor" },
+        "valueMapsToAlisa": [ { "type": "regex", "search": "^([0-9]+),([0-9]+),([0-9]+)$",  "replace": "$1" } ]
+     },
+     {
+        "alisa": { "instance": "hsv", "subvalue": "s" },
+        "mqtt": { "state": "house/outlet/bedroom/statecolor" },
+        "valueMapsToAlisa": [ { "type": "regex", "search": "^([0-9]+),([0-9]+),([0-9]+)$",  "replace": "$2" } ]
+     },
+     {
+        "alisa": { "instance": "hsv", "subvalue": "v" },
+        "mqtt": { "state": "house/outlet/bedroom/statecolor" },
+        "valueMapsToAlisa": [ { "type": "regex", "search": "^([0-9]+),([0-9]+),([0-9]+)$",  "replace": "$3" } ]
+     },
+     {
+        "alisa": { "instance": "hsv" },
+        "mqtt": { "commands": "house/outlet/bedroom/commandcolor" },
+        "valueMapsToMqtt": [ 
+           { "type": "template", "template": "${h},${s},${v}" }
+        ]
+     }
+  ]
+}
 ```
 
 #### rule.mqtt
@@ -153,14 +153,14 @@ Following types are supported:
 
 ```json
 ...
-                "state": {
-                    "instance": "hsv",
-                    "value": {
-                        "h": 255,
-                        "s": 50,
-                        "v": 100
-                    }
-                }
+"state": {
+    "instance": "hsv",
+    "value": {
+        "h": 255,
+        "s": 50,
+        "v": 100
+    }
+}
 ...
 ```
 
