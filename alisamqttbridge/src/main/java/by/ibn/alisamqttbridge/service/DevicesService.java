@@ -1,10 +1,7 @@
 package by.ibn.alisamqttbridge.service;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.UUID;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import by.ibn.alisamqttbridge.resources.Payload;
@@ -15,6 +12,9 @@ public class DevicesService {
 
 	@Autowired
 	private DeviceRepository devicesRepository;
+	
+	@Value("${devices.payload.userId:66211404}")
+	private String userId;
 
 	public Response getDevices(String requestId) {
 		
@@ -22,11 +22,7 @@ public class DevicesService {
 		
 		response.requestId = requestId;
 		response.payload = new Payload();
-		try {
-			response.payload.userId = InetAddress.getLocalHost().getHostName();
-		} catch (UnknownHostException e) {
-			response.payload.userId = UUID.randomUUID().toString();
-		}
+		response.payload.userId = userId;
 		
 		response.payload.devices = devicesRepository.getDeviceResources();
 		
