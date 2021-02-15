@@ -78,7 +78,7 @@ By default, logging is performed to console. Optionally it's possible to configu
 The basic configuration is responsible for communication and application itself. 
 
 Meanwhile, there is an extended configuration, which describes your smart home configuration, rules, and value mappings between your home automation system and Alisa Smart Home Skill. 
-The extended configuration is takes place in the [config/devices.json](config/devices.json).
+The extended configuration takes place in the [config/devices.json](config/devices.json).
 
 The **devices.json** configuration is a bit sophisticated, therefore I provide it in the dedicated [document](config/)
 

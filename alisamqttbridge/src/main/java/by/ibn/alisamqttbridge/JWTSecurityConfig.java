@@ -29,6 +29,7 @@ public class JWTSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
           .authorizeRequests(authz -> authz
+        	.antMatchers("/").permitAll()
             .antMatchers("/user/**").hasAuthority("SCOPE_" + scope)
             .anyRequest().authenticated())
           .oauth2ResourceServer(oauth2 -> oauth2.jwt());
