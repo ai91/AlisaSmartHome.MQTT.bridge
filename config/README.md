@@ -20,9 +20,9 @@ Each `rule` object may contain following nodes:
 - `valueMapsToMqtt` - mapping rules, when it's necessary to convert a value received from `devices/action` before publish to MQTT
 
 #### rule.alexa
-This node may contain following nodes:
-- `alisa.instance` - is an Alisa controller instance under `state` node.
-- `alisa.subvalue` - when reporting state to Alisa, the `state` should be a complex node, rather than a simple value. It defines a subnode name under `state` for providing state. For example for `devices.capabilities.color_setting` with `color_model`=`hsv`, the expected report value must be like that:
+This node may contain following subnodes:
+- `alisa.instance` - is an `instance` under `state` node in communication with Alisa.
+- `alisa.subvalue` - when reporting state to Alisa, the `value` should be a complex node, rather than a simple value. It defines a subnode name under `state.value` for providing state. For example for `devices.capabilities.color_setting` with `color_model`=`hsv`, the expected report value must be like that:
 
 ```json
 ...
@@ -74,7 +74,7 @@ to achieve that, it's necessary to define 3 rules, one per subvalue:
 ```
 
 #### rule.mqtt
-This node may contain following nodes:
+This node may contain following subnodes:
 - `mqtt.state` - topic name with values received from Home Automation System. Used as a value-source for `devices/query` responses.
 - `mqtt.commands` - topic name for commands to be sent to Home Automation System. Used as target-topic for `devices/action` commands received from Alexa.
 
@@ -191,6 +191,13 @@ in this case, one can use <code>h</code>, <code>s</code>, and <code>v</code> as 
 </table>
 
 When rule contains multiple mappings, they are attempted to be applied in order from first to last. If some mapping can't be applied (for example `value` mapping doesn't match `from` field), then this mapping is skipped, and verified next one. Iteration stopped after first successful conversion.    
+
+Though most of mapping types (except `linearRange`) are having output definitions as strings, when sent to Alisa as a query-response, they get casted to appropriate type automatically. For example:
+-  `{ "type": "static", "value": "abc" }`, produces string: `{ "state": { "value": "abc" } }`
+-  `{ "type": "static", "value": "1" }`, produces integer: `{ "state": { "value": 1 } }`
+-  `{ "type": "static", "value": "1.0" }`, produces float: `{ "state": { "value": 1.0 } }`
+-  `{ "type": "static", "value": "true" }`, produces boolean: `{ "state": { "value": true } }`
+-  `{ "type": "static", "value": "{\"h\":255,\"s\":50,\"v\":100}" }`, produces json: `{ "state": { "value": { "h": 255, "s": 50, "v": 100 } } }`
 
 # Troubleshooting
 Potential misconfigurations may cause either stop of the whole application, or some devices or rules may be ignored.
