@@ -86,7 +86,7 @@ public class QueryService {
 							
 							log.trace("    sending report on capability: {}, sate: {} -> {}", rule.alisa.instance, rule.mqttState.state, alisaValue);
 						} else {
-							log.trace("    no report on capability: {}, mqtt sate: {}", rule.alisa.instance, rule.mqttState.state);
+							log.trace("    no report on capability: {}, mqtt sate: {}", rule.alisa.instance, rule.mqttState == null ? "[none]" : rule.mqttState.state);
 						}
 					}
 					
