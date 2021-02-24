@@ -21,9 +21,9 @@ import by.ibn.alisamqttbridge.resources.Response;
 import by.ibn.alisamqttbridge.resources.State;
 
 @Service
-public class ActionService {
+public class IncomingActionService {
 
-	private Logger log = LoggerFactory.getLogger(ActionService.class);
+	private Logger log = LoggerFactory.getLogger(IncomingActionService.class);
 	
 	@Autowired
 	private DeviceRepository deviceRepository;

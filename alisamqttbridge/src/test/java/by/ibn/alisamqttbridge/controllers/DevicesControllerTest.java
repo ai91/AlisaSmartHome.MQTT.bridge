@@ -18,7 +18,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import by.ibn.alisamqttbridge.MQTTConfiguration;
 import by.ibn.alisamqttbridge.resources.Response;
-import by.ibn.alisamqttbridge.service.DevicesService;
+import by.ibn.alisamqttbridge.service.IncomingDevicesService;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -34,7 +34,7 @@ class DevicesControllerTest {
 	private MockMvc mvc;
 	
 	@MockBean
-	private DevicesService service;
+	private IncomingDevicesService service;
 	
 	@Test
 	void testGet() throws Exception {

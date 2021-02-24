@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -20,40 +19,18 @@ import by.ibn.alisamqttbridge.model.ValueMap;
 import by.ibn.alisamqttbridge.resources.Capability;
 import by.ibn.alisamqttbridge.resources.Device;
 import by.ibn.alisamqttbridge.resources.DeviceBridgingRule;
-import by.ibn.alisamqttbridge.resources.Payload;
 import by.ibn.alisamqttbridge.resources.Property;
-import by.ibn.alisamqttbridge.resources.Request;
-import by.ibn.alisamqttbridge.resources.Response;
 import by.ibn.alisamqttbridge.resources.State;
 
 @Service
-public class QueryService {
+public class DeviceStateService {
 	
-	private Logger log = LoggerFactory.getLogger(QueryService.class);
+	private Logger log = LoggerFactory.getLogger(DeviceStateService.class);
 	
 	@Autowired
 	private DeviceRepository deviceRepository;
 
-	public Response getStates(Request request, String requestId) {
-		
-		Response response = new Response();
-		response.requestId = requestId;
-		
-		response.payload = new Payload();
-		
-		if (request.devices != null) {
-			
-			response.payload.devices = request.devices.stream()
-					.map( device -> device.id )
-					.map( deviceId -> getDeviceState(deviceId) )
-					.collect(Collectors.toList());
-			
-		}
-				
-		return response;
-	}
-
-	private Device getDeviceState(String deviceId) {
+	public Device getDeviceState(String deviceId) {
 		
 		log.trace("  getting state on device: {}", deviceId);
 		

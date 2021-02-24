@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import by.ibn.alisamqttbridge.resources.Request;
 import by.ibn.alisamqttbridge.resources.Response;
-import by.ibn.alisamqttbridge.service.ActionService;
+import by.ibn.alisamqttbridge.service.IncomingActionService;
 
 /**
  * Entry point for action requests
@@ -28,7 +28,7 @@ public class ActionController {
 	private Logger log = LoggerFactory.getLogger(ActionController.class);
 
 	@Autowired
-	private ActionService service;
+	private IncomingActionService service;
 
 	@RequestMapping(
 			path = "/user/devices/action", 

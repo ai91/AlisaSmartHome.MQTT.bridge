@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import by.ibn.alisamqttbridge.resources.Response;
-import by.ibn.alisamqttbridge.service.DevicesService;
+import by.ibn.alisamqttbridge.service.IncomingDevicesService;
 
 /**
  * Entry point for devices info
@@ -26,7 +26,7 @@ public class DevicesController {
 	private Logger log = LoggerFactory.getLogger(DevicesController.class);
 
 	@Autowired
-	private DevicesService service;
+	private IncomingDevicesService service;
 
 	@RequestMapping(
 			path = "/user/devices", 
