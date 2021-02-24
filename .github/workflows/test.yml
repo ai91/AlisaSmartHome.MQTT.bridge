@@ -20,7 +20,7 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 11
-    - run: cd alisamqttbridge
+    - run: cd ./alisamqttbridge
     - run: chmod +x alisamqttbridge/gradlew
     - name: Build with Gradle
-      run: ./gradlew test
+      run: alisamqttbridge/gradlew test
