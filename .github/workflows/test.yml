@@ -21,6 +21,6 @@ jobs:
       with:
         java-version: 11
     - run: cd alisamqttbridge
-    - run: chmod +x ./gradlew
+    - run: chmod +x alisamqttbridge/gradlew
     - name: Build with Gradle
       run: ./gradlew test
