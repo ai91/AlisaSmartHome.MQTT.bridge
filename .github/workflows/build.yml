@@ -26,6 +26,8 @@ jobs:
   build-docker:
     needs: test
     runs-on: ubuntu-latest
+    env: 
+      LATEST_TAG: ai91/alisamqttbridge:latest
     defaults:
       run:
         working-directory: ./alisamqttbridge
@@ -41,5 +43,11 @@ jobs:
         acr-tokenname: ${{ secrets.DOCKER_USERNAME }}
         acr-token: ${{ secrets.DOCKER_PASSWORD }}
         acr-account: ${{ secrets.DOCKER_USERNAME }}
-        acr-imagename: ai91/alisamqttbridge:latest
-      
+        acr-imagename: $LATEST_TAG
+    - name: run docker push
+      run: |
+        @docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+        @docker push $LATEST_TAG
+      env: 
+        DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+        DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}        
