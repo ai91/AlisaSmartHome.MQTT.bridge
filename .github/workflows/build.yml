@@ -28,6 +28,8 @@ jobs:
     runs-on: ubuntu-latest
     env: 
       LATEST_TAG: ai91/alisamqttbridge:latest
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}        
     defaults:
       run:
         working-directory: ./alisamqttbridge
@@ -39,9 +41,5 @@ jobs:
     - run: chmod +x ./gradlew
     - run: ./gradlew bootBuildImage --imageName=ai91/alisamqttbridge:latest
     - name: run docker push
-      run: |
-        @docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-        @docker push $LATEST_TAG
-      env: 
-        DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-        DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}        
+    - run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+    - run: docker push $LATEST_TAG
