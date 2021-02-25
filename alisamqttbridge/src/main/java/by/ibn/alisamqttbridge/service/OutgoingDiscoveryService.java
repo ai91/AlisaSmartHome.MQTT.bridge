@@ -1,5 +1,6 @@
 package by.ibn.alisamqttbridge.service;
 
+import java.math.BigDecimal;
 import java.net.URI;
 
 import org.apache.commons.lang3.StringUtils;
@@ -47,7 +48,7 @@ public class OutgoingDiscoveryService {
 			log.trace("Reporting discovery to the {} ...", discoveryUrl);
 
 			CallbackRequest request = new CallbackRequest();
-			request.timestamp = Float.valueOf(System.currentTimeMillis() / 1000);
+			request.timestamp = BigDecimal.valueOf(System.currentTimeMillis() / 100, 1);
 			request.payload = new Payload();
 			request.payload.userId = userId;
 

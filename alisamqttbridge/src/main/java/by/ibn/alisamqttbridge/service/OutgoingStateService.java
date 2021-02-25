@@ -1,5 +1,6 @@
 package by.ibn.alisamqttbridge.service;
 
+import java.math.BigDecimal;
 import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -52,7 +53,7 @@ public class OutgoingStateService {
 			log.trace("Reporting state of {} to the {} ...", deviceIds, stateUrl);
 
 			CallbackRequest request = new CallbackRequest();
-			request.timestamp = Float.valueOf(System.currentTimeMillis() / 1000);
+			request.timestamp = BigDecimal.valueOf(System.currentTimeMillis() / 100, 1);
 			request.payload = new Payload();
 			request.payload.userId = userId;
 			request.payload.devices = deviceIds
