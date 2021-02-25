@@ -31,7 +31,7 @@ jobs:
         asset_name: alisamqttbridge-${{ env.VERSION }}.jar
         tag: ${{ github.ref }}
         overwrite: true
-        body: "# Docker image:\n`docker pull ${VERSION_TAG}`"
+        body: "# Docker image: `docker pull ${{ env.VERSION_TAG }}`"
     - run: ./gradlew bootBuildImage -DVERSION=$VERSION --imageName=$LATEST_TAG
     - run: ./gradlew bootBuildImage -DVERSION=$VERSION --imageName=$VERSION_TAG
     - run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
