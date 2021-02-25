@@ -23,12 +23,14 @@ jobs:
     - run: echo "VERSION_TAG=ai91/alisamqttbridge:$VERSION" >> $GITHUB_ENV
     - run: chmod +x ./gradlew
     - run: ./gradlew build -DVERSION=$VERSION
+    - run: echo "# Docker image:\n`docker pull ${VERSION_TAG}`" > ${{ github.workflow }}-read.md
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
       with:
         tag_name: ${{ github.ref }}
         release_name: Release ${{ github.ref }}
+        body_path: ${{ github.workflow }}-read.md
         draft: false
         prerelease: false
     - name: Upload Release Asset
