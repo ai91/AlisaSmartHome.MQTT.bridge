@@ -27,8 +27,8 @@ jobs:
       uses: svenstaro/upload-release-action@v2
       with:
         repo_token: ${{ secrets.GITHUB_TOKEN }}
-        file: ./build/libs/alisamqttbridge-${VERSION}.jar
-        asset_name: alisamqttbridge-${VERSION}.jar
+        file: ./build/libs/alisamqttbridge-${{ env.VERSION }}.jar
+        asset_name: alisamqttbridge-${{ env.VERSION }}.jar
         tag: ${{ github.ref }}
         overwrite: true
         body: "# Docker image:\n`docker pull ${VERSION_TAG}`"
