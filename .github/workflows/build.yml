@@ -38,12 +38,6 @@ jobs:
         java-version: 11
     - run: chmod +x ./gradlew
     - run: ./gradlew bootBuildImage --imageName=ai91/alisamqttbridge:latest
-    - uses: julioarruda/pushimagetoregistry@v1
-      with:
-        acr-tokenname: ${{ secrets.DOCKER_USERNAME }}
-        acr-token: ${{ secrets.DOCKER_PASSWORD }}
-        acr-account: ${{ secrets.DOCKER_USERNAME }}
-        acr-imagename: $LATEST_TAG
     - name: run docker push
       run: |
         @docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
