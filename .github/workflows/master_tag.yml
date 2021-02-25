@@ -1,0 +1,46 @@
+name: Master tag
+
+on:
+  push:
+    tags: ['*']
+
+jobs:
+  build-docker:
+    runs-on: ubuntu-latest
+    env: 
+      VERSION: ${GITHUB_REF#refs/*/}
+      VERSION_TAG: ai91/alisamqttbridge:$VERSION
+      LATEST_TAG: ai91/alisamqttbridge:latest
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+    defaults:
+      run:
+        working-directory: ./alisamqttbridge
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-java@v1
+      with:
+        java-version: 11
+    - run: chmod +x ./gradlew
+    - run: ./gradlew build -DVERSION=$VERSION
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        draft: false
+        prerelease: false
+    - name: Upload Release Asset
+      id: upload-release-asset 
+      uses: actions/upload-release-asset@v1
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+        asset_path: ./build/libs/alisamqttbridge-${VERSION}.jar
+        asset_name: alisamqttbridge-${VERSION}.jar
+        asset_content_type: application/java-archive
+    - run: ./gradlew bootBuildImage -DVERSION=$VERSION --imageName=$LATEST_TAG
+    - run: ./gradlew bootBuildImage -DVERSION=$VERSION --imageName=$VERSION_TAG
+    - run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+    - run: docker push $LATEST_TAG
+    - run: docker push $VERSION_TAG

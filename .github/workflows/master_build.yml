@@ -1,7 +1,4 @@
-# This workflow will build a Java project with Gradle
-# For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-gradle
-
-name: Build and push docker latest
+name: Master build
 
 on:
   push:
@@ -29,7 +26,7 @@ jobs:
     env: 
       LATEST_TAG: ai91/alisamqttbridge:latest
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}        
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
     defaults:
       run:
         working-directory: ./alisamqttbridge
@@ -39,6 +36,6 @@ jobs:
       with:
         java-version: 11
     - run: chmod +x ./gradlew
-    - run: ./gradlew bootBuildImage --imageName=ai91/alisamqttbridge:latest
+    - run: ./gradlew bootBuildImage --imageName=$LATEST_TAG
     - run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
     - run: docker push $LATEST_TAG
