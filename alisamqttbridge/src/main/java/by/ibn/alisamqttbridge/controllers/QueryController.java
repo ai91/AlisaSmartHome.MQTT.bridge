@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import by.ibn.alisamqttbridge.resources.Request;
 import by.ibn.alisamqttbridge.resources.Response;
-import by.ibn.alisamqttbridge.service.QueryService;
+import by.ibn.alisamqttbridge.service.IncomingQueryService;
 
 /**
  * Entry point for query requests
@@ -28,7 +28,7 @@ public class QueryController {
 	private Logger log = LoggerFactory.getLogger(QueryController.class);
 
 	@Autowired
-	private QueryService service;
+	private IncomingQueryService service;
 
 	@RequestMapping(
 			path = "/user/devices/query", 

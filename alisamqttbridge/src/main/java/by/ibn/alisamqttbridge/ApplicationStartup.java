@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 
 import by.ibn.alisamqttbridge.service.DeviceRepository;
 import by.ibn.alisamqttbridge.service.MQTTService;
+import by.ibn.alisamqttbridge.service.OutgoingDiscoveryService;
 
 @Component
 public class ApplicationStartup implements ApplicationListener<ApplicationReadyEvent> {
@@ -15,12 +16,17 @@ public class ApplicationStartup implements ApplicationListener<ApplicationReadyE
 	private DeviceRepository deviceRepository;
 	
 	@Autowired
+	private OutgoingDiscoveryService outgoingDiscoveryService;
+	
+	@Autowired
 	private MQTTService mqttService;
 
 	@Override
 	public void onApplicationEvent(final ApplicationReadyEvent event) {
 
 		mqttService.subscribeOnTopics(deviceRepository);
+		
+		outgoingDiscoveryService.reportDiscovery();
 		
 	}
 }

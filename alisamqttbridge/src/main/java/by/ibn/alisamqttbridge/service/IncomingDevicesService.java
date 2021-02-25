@@ -8,7 +8,7 @@ import by.ibn.alisamqttbridge.resources.Payload;
 import by.ibn.alisamqttbridge.resources.Response;
 
 @Service
-public class DevicesService {
+public class IncomingDevicesService {
 
 	@Autowired
 	private DeviceRepository devicesRepository;

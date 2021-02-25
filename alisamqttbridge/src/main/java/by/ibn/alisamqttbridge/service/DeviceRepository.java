@@ -58,6 +58,20 @@ public class DeviceRepository {
 				.findFirst();
 	}
 	
+	public List<Device> getDevicesByStateTopic(String topicName)
+	{
+		return getDevices().stream()
+				.filter(device -> 
+					device.capabilities.stream().filter(capability -> capability.rules.stream()
+							.filter(rule -> StringUtils.equalsIgnoreCase(topicName, rule.mqtt.state)).findAny().isPresent()
+					).findAny().isPresent()
+					||
+					device.properties.stream().filter(property -> property.rules.stream()
+							.filter(rule -> StringUtils.equalsIgnoreCase(topicName, rule.mqtt.state)).findAny().isPresent()
+					).findAny().isPresent()
+				).collect(Collectors.toList());
+	}
+	
 	public List<Device> getDevices() {
 		
 		if (devices == null) {
@@ -148,8 +162,12 @@ public class DeviceRepository {
 				        			
 				        			log.trace("      rule added.");
 				        		}
+			    			} else {
+			    				capability.rules = new ArrayList<>();
 			    			}
 		    			}
+		    		} else {
+		    			device.capabilities = new ArrayList<>();
 		    		}
 		    		
 		    		// scan properties and initialize device states 
@@ -197,8 +215,12 @@ public class DeviceRepository {
 		    						
 		    						log.trace("      rule added.");
 		    					}
+		    				} else {
+		    					property.rules = new ArrayList<>();
 		    				}
 		    			}
+		    		} else {
+		    			device.properties = new ArrayList<>();
 		    		}
 		    		
 		    		if (!deviceMisconfigured) {

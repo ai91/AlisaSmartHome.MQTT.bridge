@@ -17,7 +17,7 @@
 				{
 					"type": "devices.capabilities.on_off",
 					"retrievable": true,
-					"reportable": false,
+					"reportable": true,
 					"rules": [
 						{
 							"alisa": { "instance": "on" },
@@ -55,7 +55,7 @@
 				{
 					"type": "devices.capabilities.range",
 					"retrievable": true,
-					"reportable": false,
+					"reportable": true,
 					"parameters": {
 						"instance": "open",
 						"random_access": true,
@@ -93,7 +93,7 @@
 				{
 					"type": "devices.capabilities.on_off",
 					"retrievable": true,
-					"reportable": false,
+					"reportable": true,
 					"rules": [
 						{
 							"alisa": { "instance": "on" },

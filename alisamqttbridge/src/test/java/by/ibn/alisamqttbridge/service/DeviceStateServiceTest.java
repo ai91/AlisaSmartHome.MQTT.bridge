@@ -7,12 +7,12 @@ import java.util.HashMap;
 
 import org.junit.jupiter.api.Test;
 
-class QueryServiceTest {
+class DeviceStateServiceTest {
 	
 	@Test
 	void castValue() {
 		
-		QueryService testee = new QueryService();
+		DeviceStateService testee = new DeviceStateService();
 		
 		assertEquals("", testee.castValue(null));
 		assertEquals("test", testee.castValue("test"));

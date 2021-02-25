@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.paho.client.mqttv3.IMqttClient;
@@ -29,6 +30,9 @@ public class MQTTService {
 	
 	@Autowired
 	private IMqttClient mqttClient;
+	
+	@Autowired
+	private OutgoingStateService outgoingStateService;
 	
 	public void sendMessage(String topic, String value) {
 
@@ -59,7 +63,7 @@ public class MQTTService {
 					if (capability.rules != null) {
 						
 						for (DeviceBridgingRule rule: capability.rules) {
-							subscribe(rule);
+							subscribe(rule, deviceRepository);
 						}
 						
 					}
@@ -75,7 +79,7 @@ public class MQTTService {
 					if (property.rules != null) {
 						
 						for (DeviceBridgingRule rule: property.rules) {
-							subscribe(rule);
+							subscribe(rule, deviceRepository);
 						}
 						
 					}
@@ -88,7 +92,7 @@ public class MQTTService {
 		
 	}
 	
-	private void subscribe(DeviceBridgingRule rule) {
+	private void subscribe(DeviceBridgingRule rule, DeviceRepository deviceRepository) {
 
 		
 		String topic = rule.mqtt.state;
@@ -115,6 +119,11 @@ public class MQTTService {
 						
 						for(MQTTState mqttState: subscriptions.get(topic)) {
 							mqttState.state = value;
+						}
+						
+						List<Device> devices = deviceRepository.getDevicesByStateTopic(topic);
+						if (devices != null && !devices.isEmpty()) {
+							outgoingStateService.reportState(devices.stream().map( device -> device.id).collect(Collectors.toList()));
 						}
 						
 					});
