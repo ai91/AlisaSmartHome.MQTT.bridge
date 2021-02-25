@@ -8,8 +8,6 @@ jobs:
   build-docker:
     runs-on: ubuntu-latest
     env: 
-      VERSION: ${GITHUB_REF#refs/*/}
-      VERSION_TAG: ai91/alisamqttbridge:$VERSION
       LATEST_TAG: ai91/alisamqttbridge:latest
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
       DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
@@ -17,6 +15,8 @@ jobs:
       run:
         working-directory: ./alisamqttbridge
     steps:
+    - run: echo "VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+    - run: echo "VERSION_TAG=ai91/alisamqttbridge:$VERSION" >> $GITHUB_ENV
     - uses: actions/checkout@v2
     - uses: actions/setup-java@v1
       with:
