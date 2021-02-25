@@ -1,8 +1,6 @@
-name: Push into branch
+name: Pull request
 
-on:
-  pull_request:
-    branches-ignore: [ main ]
+on: pull_request
 
 jobs:
   test:
