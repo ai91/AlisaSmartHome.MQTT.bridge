@@ -20,6 +20,6 @@ jobs:
       with:
         java-version: 11
     - run: chmod +x alisamqttbridge/gradlew
-    - working-directory: alisamqttbridge
+    - working-directory: ./alisamqttbridge
       run: ./gradlew test
       
