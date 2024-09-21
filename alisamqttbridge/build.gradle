@@ -30,6 +30,13 @@ dependencies {
 	
 }
 
+bootBuildImage {
+  environment = [
+    'BPE_DELIM_JAVA_TOOL_OPTIONS' : ' ',
+    'BPE_APPEND_JAVA_TOOL_OPTIONS' : '--add-opens=java.base/java.net=ALL-UNNAMED'
+    ]
+}
+
 test {
 	useJUnitPlatform()
 }
