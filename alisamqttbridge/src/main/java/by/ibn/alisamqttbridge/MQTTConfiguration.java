@@ -4,6 +4,7 @@ import org.eclipse.paho.client.mqttv3.IMqttClient;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +33,7 @@ public class MQTTConfiguration {
 		log.trace(" ClientId: {}", clientId);
 		log.trace(" User: {}", mqttConnectOptions.getUserName());
 
-		IMqttClient mqttClient = new MqttClient(serverURI, clientId);
+		IMqttClient mqttClient = new MqttClient(serverURI, clientId, new MemoryPersistence());
 
 		mqttClient.connect(mqttConnectOptions);
 
