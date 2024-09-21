@@ -30,6 +30,8 @@ dependencies {
 	
 }
 
+// https://stackoverflow.com/questions/74195999/spring-boot-2-7-5-and-java-17-unable-to-make-field-private-static-final-java-la
+// https://stackoverflow.com/questions/61855229/how-to-set-jvm-arguments-when-running-mvn-spring-bootbuild-image-command-in-spr
 bootBuildImage {
   environment = [
     'BPE_DELIM_JAVA_TOOL_OPTIONS' : ' ',
