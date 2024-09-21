@@ -1,6 +1,8 @@
 package by.ibn.alisamqttbridge.model;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
@@ -9,7 +11,6 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import by.ibn.alisamqttbridge.TestUtil;
-import by.ibn.alisamqttbridge.model.ValueMapValue;
 
 class ValueMapValueTest {
 
@@ -20,6 +21,7 @@ class ValueMapValueTest {
 		
 		ValueMapValue valueMap = new ObjectMapper().readerFor(ValueMapValue.class).readValue(jsonString);
 		
+		assertFalse(valueMap.isApplicable(null));
 		assertFalse(valueMap.isApplicable("1"));
 		assertFalse(valueMap.isApplicable("on"));
 		assertTrue(valueMap.isApplicable("TurnOn"));

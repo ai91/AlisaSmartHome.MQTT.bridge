@@ -13,7 +13,7 @@ public class ValueMapValue extends ValueMap {
 
 	@Override
 	public boolean isApplicable(Object value) {
-		return StringUtils.equalsIgnoreCase(value.toString(), from);
+		return value != null && StringUtils.equalsIgnoreCase(value.toString(), from);
 	}
 
 	@Override

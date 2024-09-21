@@ -23,6 +23,7 @@ class ValueMapTemplateTest {
 		
 		ValueMapTemplate valueMap = new ObjectMapper().readerFor(ValueMapTemplate.class).readValue(jsonString);
 		
+		assertTrue(valueMap.isApplicable(null));
 		assertTrue(valueMap.isApplicable("1"));
 		assertTrue(valueMap.isApplicable("on"));
 		assertTrue(valueMap.isApplicable("cmd23"));

@@ -14,7 +14,7 @@ public class ValueMapRegex extends ValueMap {
 	
 	@Override
 	public boolean isApplicable(Object value) {
-		return Pattern.matches(search, value.toString());
+		return value != null && Pattern.matches(search, value.toString());
 	}
 
 	@Override

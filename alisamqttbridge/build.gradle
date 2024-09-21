@@ -1,11 +1,11 @@
 plugins {
     id 'java'
     id 'eclipse'
-	id 'org.springframework.boot' version '2.4.2'
-	id 'io.spring.dependency-management' version '1.0.11.RELEASE'    
+	id 'org.springframework.boot' version '3.3.4'
+	id 'io.spring.dependency-management' version '1.1.6'    
 }
 
-sourceCompatibility = 11
+sourceCompatibility = 21
 group = 'by.ibn'
 version = System.properties['VERSION'] ?: new Date().format('yyyy-MM-dd-HH-mm')
 
@@ -17,11 +17,11 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
-	implementation 'org.springframework.security.oauth.boot:spring-security-oauth2-autoconfigure:2.4.2'
+	implementation 'org.springframework.security.oauth.boot:spring-security-oauth2-autoconfigure:2.6.8'
 	
 	implementation 'org.apache.commons:commons-lang3:3.11'
 	implementation 'org.apache.commons:commons-text:1.9'
-	implementation 'org.springframework.integration:spring-integration-mqtt:5.4.3'
+	implementation 'org.springframework.integration:spring-integration-mqtt:6.3.4'
 	
 	implementation 'net.objecthunter:exp4j:0.4.8'
 
