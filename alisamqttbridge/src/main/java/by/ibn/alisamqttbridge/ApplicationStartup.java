@@ -2,7 +2,6 @@ package by.ibn.alisamqttbridge;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
@@ -17,11 +16,9 @@ public class ApplicationStartup {
 	private DeviceRepository deviceRepository;
 	
 	@Autowired
-	@Lazy
 	private OutgoingDiscoveryService outgoingDiscoveryService;
 	
 	@Autowired
-	@Lazy
 	private MQTTService mqttService;
 
 	@EventListener(ApplicationReadyEvent.class)
