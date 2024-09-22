@@ -12,12 +12,35 @@
 						{
 							"alisa": { "instance": "someinstance" },
 							"mqtt": { "state": "statetopic" },
-							"valueMapsToAlisa": [ { "type": "regex", "search": "^val([0-9]+)$",  "replace": "$1" } ]
+							"valueMapsToAlisa": [ 
+								{ "type": "regex", "search": "^val([0-9]+)$",  "replace": "$1" }, 
+								{ "type": "regex", "search": "^str([0-9]+)$",  "replace": "\"$1\"" } 
+							]
 						},
 						{
 							"alisa": { "instance": "someinstance" },
 							"mqtt": { "state": "statetopic" },
 							"valueMapsToAlisa": [ { "type": "regex", "search": "^str([0-9]+)$",  "replace": "\"$1\"" } ]
+						}
+					]
+					
+                },
+                {
+                    "type": "sometype2",
+                    "parameters": {
+                        "instance": "someinstance"
+                    },
+					"rules": [
+						{
+							"alisa": { "instance": "someinstance" },
+							"mqtt": { "state": "statetopic" },
+							"valueMapsToAlisa": [
+								{ "type": "regex", "search": "^.*\"mode\":\\s*\"fan\".*$", "replace": "fan_only" },
+								{ "type": "regex", "search": "^.*\"mode\":\\s*\"heat\".*$", "replace": "heat" },
+								{ "type": "regex", "search": "^.*\"mode\":\\s*\"cool\".*$", "replace": "cool" },
+								{ "type": "regex", "search": "^.*\"mode\":\\s*\"dry\".*$", "replace": "dry" },
+								{ "type": "regex", "search": "^.*\"mode\":\\s*\"auto\".*$", "replace": "auto" }
+							]
 						}
 					]
 					

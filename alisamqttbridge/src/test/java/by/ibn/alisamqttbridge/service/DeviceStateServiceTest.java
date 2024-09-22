@@ -42,7 +42,7 @@ class DeviceStateServiceTest {
 	}
 
 	@Test
-	void testConfig() throws JsonMappingException, JsonProcessingException {
+	void testMappingRules1() throws JsonMappingException, JsonProcessingException {
 		
 		String jsonString = TestUtil.readResource("/valuemapstest/device.json");
 		
@@ -75,6 +75,48 @@ class DeviceStateServiceTest {
 		state.state = "poooh12";
 		deviceState = testee.getDeviceState("abc-123");
 		assertEquals(0, deviceState.capabilities.size());
+	}
+	
+	@Test
+	void testMappingRules2() throws JsonMappingException, JsonProcessingException {
+		
+		String jsonString = TestUtil.readResource("/valuemapstest/device.json");
+		
+		DevicesConfig devicesConfig = new ObjectMapper().readerFor(DevicesConfig.class).readValue(jsonString);
+		
+		
+		DeviceStateService testee = new DeviceStateService() {
+			@Override
+			Optional<Device> findDevice(String deviceId) {
+				return Optional.of(devicesConfig.devices.get(0));
+			}
+		};
+		
+		MQTTState state = new MQTTState();
+		
+		List<DeviceBridgingRule> rules = devicesConfig.devices.get(0).capabilities.get(1).rules;
+		for(DeviceBridgingRule rule: rules)
+		{
+			rule.mqttState = state;
+		}
+		
+		state.state = """
+			{
+			  "power": 0,
+			  "swing": 0,
+			  "mode": "heat",
+			  "targetTemp": 27,
+			  "currentTemp": 26,
+			  "pipeTemp": 26,
+			  "speed": 0,
+			  "settingsCelcius": 1,
+			  "mute": 0
+			}				
+				""";
+		
+		Device deviceState = testee.getDeviceState("abc-123");
+		assertEquals("heat", deviceState.capabilities.get(0).state.value);
+		
 	}
 	
 }
