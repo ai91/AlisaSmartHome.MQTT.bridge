@@ -37,7 +37,7 @@ public class DeviceStateService {
 		Device deviceStateReport = new Device();
 		deviceStateReport.id = deviceId;
 		
-		Optional<Device> deviceOpt = deviceRepository.getDeviceById(deviceId);
+		Optional<Device> deviceOpt = findDevice(deviceId);
 		if (deviceOpt.isPresent()) {
 			Device device = deviceOpt.get();
 
@@ -102,13 +102,17 @@ public class DeviceStateService {
 		return deviceStateReport;
 	}
 
+	Optional<Device> findDevice(String deviceId) {
+		return deviceRepository.getDeviceById(deviceId);
+	}
+
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	Object getAlisaValue(Object alisaValue, DeviceBridgingRule rule) {
 		
 		if (rule.mqttState != null) {
 		
 			String mqttValue = rule.mqttState.state;
-			String mappedValue = mqttValue;
+			String mappedValue = null;
 			
 			// try to match first mapper. If none matches - simply pass value as it is.
 			for (ValueMap valueMap: rule.valueMapsToAlisa) {
@@ -137,8 +141,17 @@ public class DeviceStateService {
 	Object castValue(String value) {
 		
 		if (value == null) {
-			return "";
+			return null;
 		}
+		
+		if (StringUtils.equalsIgnoreCase(value, "null")) {
+			return Boolean.valueOf(value);
+		}
+		
+		if (StringUtils.startsWith(value, "\"") && StringUtils.endsWith(value, "\"")) {
+			return StringUtils.substring(value, 1, -1);
+		}
+		
 		if (StringUtils.equalsAnyIgnoreCase(value, "true", "false")) {
 			return Boolean.valueOf(value);
 		}
