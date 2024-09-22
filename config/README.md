@@ -198,9 +198,11 @@ Though most of mapping types (except `linearRange`) are having output definition
 -  `{ "type": "static", "value": "1.0" }`, produces float: `{ "state": { "value": 1.0 } }`
 -  `{ "type": "static", "value": "true" }`, produces boolean: `{ "state": { "value": true } }`
 -  `{ "type": "static", "value": "{\"h\":255,\"s\":50,\"v\":100}" }`, produces json: `{ "state": { "value": { "h": 255, "s": 50, "v": 100 } } }`
+
 When it's necessary to produce a string value from and avoid auto-casting, then value needs to be wrapped into double quotes. Example:
 -  `{ "type": "static", "value": "\"1\"" }`, produces integer: `{ "state": { "value": "1" } }`
 -  `{ "type": "static", "value": "\"true\"" }`, produces boolean: `{ "state": { "value": "true" } }`
+
 When result of mapping is string `null`, or none of rules can be applied, the original value is ignored and capability or property is not sent to Yandex servers. This is helpful when some mqtt topic retrieves a json value with all supported capabilities/properties. 
 
 > [!NOTE] 
@@ -219,89 +221,88 @@ When result of mapping is string `null`, or none of rules can be applied, the or
 > In this case we may register following capabilities for each value in the json:
 > 
 > ```json
-> 			"capabilities": [
-> 				{
-> 					"type": "devices.capabilities.on_off",
-> 					...
-> 					"rules": [
-> 						{
-> 							"alisa": { "instance": "on" },
-> 							"mqtt": { "state": "ac/bedroom/state", ... },
-> 							"valueMapsToAlisa": [
-> 								{ "type": "regex", "search": "^.*\"power\":\\s*1.*$", "replace": "true" },
-> 								{ "type": "regex", "search": "^.*\"power\":\\s*0.*$", "replace": "false" }
-> 							],
-> 							...
-> 						}
-> 					]
-> 				},
-> 				{
-> 					"type": "devices.capabilities.range",
-> 					...
-> 					"rules": [
-> 						{
-> 							"alisa": { "instance": "temperature" },
-> 							"mqtt": { "state": "ac/bedroom/state", ... },
-> 							"valueMapsToAlisa": [
-> 								{ "type": "regex", "search": "^.*\"targetTemp\":\\s*([0-9]+).*$", "replace": "$1" }
-> 							],
-> 							...
-> 						}
-> 					]
-> 				},
-> 				{
-> 					"type": "devices.capabilities.mode",
-> 					...
-> 					"rules": [
-> 						{
-> 							"alisa": { "instance": "fan_speed" },
-> 							"mqtt": { "state": "ac/bedroom/state", ... },
-> 							"valueMapsToAlisa": [
-> 								{ "type": "regex", "search": "^.*\"speed\":\\s*0.*$", "replace": "auto" },
-> 								{ "type": "regex", "search": "^.*\"speed\":\\s*1.*$", "replace": "quiet" },
-> 								{ "type": "regex", "search": "^.*\"speed\":\\s*2.*$", "replace": "low" },
-> 								{ "type": "regex", "search": "^.*\"speed\":\\s*3.*$", "replace": "medium" },
-> 								{ "type": "regex", "search": "^.*\"speed\":\\s*4.*$", "replace": "high" },
-> 								{ "type": "regex", "search": "^.*\"speed\":\\s*5.*$", "replace": "turbo" }
-> 							],
-> 							...
-> 						}
-> 					]
-> 				},
-> 				{
-> 					"type": "devices.capabilities.mode",
-> 					...
-> 					"rules": [
-> 						{
-> 							"alisa": { "instance": "thermostat" },
-> 							"mqtt": { "state": "ac/bedroom/state", ... },
-> 							"valueMapsToAlisa": [
-> 								{ "type": "regex", "search": "^.*\"mode\":\\s*\"fan\".*$", "replace": "fan_only" },
-> 								{ "type": "regex", "search": "^.*\"mode\":\\s*\"heat\".*$", "replace": "heat" },
-> 								{ "type": "regex", "search": "^.*\"mode\":\\s*\"cool\".*$", "replace": "cool" },
-> 								{ "type": "regex", "search": "^.*\"mode\":\\s*\"dry\".*$", "replace": "dry" },
-> 								{ "type": "regex", "search": "^.*\"mode\":\\s*\"auto\".*$", "replace": "auto" }
-> 							],
-> 							...
-> 						}
-> 					]
-> 				},
-> 			],
-> 			"properties": [{
+> "capabilities": [
+> 	{
+> 		"type": "devices.capabilities.on_off",
+> 		...
+> 		"rules": [
+> 			{
+> 				"alisa": { "instance": "on" },
+> 				"mqtt": { "state": "ac/bedroom/state", ... },
+> 				"valueMapsToAlisa": [
+> 					{ "type": "regex", "search": "^.*\"power\":\\s*1.*$", "replace": "true" },
+> 					{ "type": "regex", "search": "^.*\"power\":\\s*0.*$", "replace": "false" }
+> 				],
 > 				...
-> 				"rules": [
-> 					{
-> 						"alisa": { "instance": "temperature" },
-> 						"mqtt": { "state": "ac/bedroom/state" },
-> 						"valueMapsToAlisa": [
-> 							{ "type": "regex", "search": "^.*\"currentTemp\":\\s*([0-9]+).*$", "replace": "$1" }
-> 						]
-> 					}
-> 				]
-> 			}]
-> 
+> 			}
+> 		]
+> 	},
+> 	{
+> 		"type": "devices.capabilities.range",
+> 		...
+> 		"rules": [
+> 			{
+> 				"alisa": { "instance": "temperature" },
+> 				"mqtt": { "state": "ac/bedroom/state", ... },
+> 				"valueMapsToAlisa": [
+> 					{ "type": "regex", "search": "^.*\"targetTemp\":\\s*([0-9]+).*$", "replace": "$1" }
+> 				],
+> 				...
+> 			}
+> 		]
+> 	},
+> 	{
+> 		"type": "devices.capabilities.mode",
+> 		...
+> 		"rules": [
+> 			{
+> 				"alisa": { "instance": "fan_speed" },
+> 				"mqtt": { "state": "ac/bedroom/state", ... },
+> 				"valueMapsToAlisa": [
+> 					{ "type": "regex", "search": "^.*\"speed\":\\s*0.*$", "replace": "auto" },
+> 					{ "type": "regex", "search": "^.*\"speed\":\\s*1.*$", "replace": "quiet" },
+> 					{ "type": "regex", "search": "^.*\"speed\":\\s*2.*$", "replace": "low" },
+> 					{ "type": "regex", "search": "^.*\"speed\":\\s*3.*$", "replace": "medium" },
+> 					{ "type": "regex", "search": "^.*\"speed\":\\s*4.*$", "replace": "high" },
+> 					{ "type": "regex", "search": "^.*\"speed\":\\s*5.*$", "replace": "turbo" }
+> 				],
+> 				...
+> 			}
+> 		]
+> 	},
+> 	{
+> 		"type": "devices.capabilities.mode",
+> 		...
+> 		"rules": [
+> 			{
+> 				"alisa": { "instance": "thermostat" },
+> 				"mqtt": { "state": "ac/bedroom/state", ... },
+> 				"valueMapsToAlisa": [
+> 					{ "type": "regex", "search": "^.*\"mode\":\\s*\"fan\".*$", "replace": "fan_only" },
+> 					{ "type": "regex", "search": "^.*\"mode\":\\s*\"heat\".*$", "replace": "heat" },
+> 					{ "type": "regex", "search": "^.*\"mode\":\\s*\"cool\".*$", "replace": "cool" },
+> 					{ "type": "regex", "search": "^.*\"mode\":\\s*\"dry\".*$", "replace": "dry" },
+> 					{ "type": "regex", "search": "^.*\"mode\":\\s*\"auto\".*$", "replace": "auto" }
+> 				],
+> 				...
+> 			}
+> 		]
+> 	},
+> ],
+> "properties": [{
+> 	...
+> 	"rules": [
+> 		{
+> 			"alisa": { "instance": "temperature" },
+> 			"mqtt": { "state": "ac/bedroom/state" },
+> 			"valueMapsToAlisa": [
+> 				{ "type": "regex", "search": "^.*\"currentTemp\":\\s*([0-9]+).*$", "replace": "$1" }
+> 			]
+> 		}
+> 	]
+> }]
 > ```
-> In example above, all capabilities are getting values from same topic `ac/bedroom/state`, but each of them is only locating it's own value of > interest.
+> In example above, all capabilities are getting values from same topic `ac/bedroom/state`, but each of them is only locating it's own value of  interest.
 
 
 # Troubleshooting
