@@ -19,6 +19,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import by.ibn.alisamqttbridge.resources.CallbackRequest;
 import by.ibn.alisamqttbridge.resources.CallbackResponse;
 import by.ibn.alisamqttbridge.resources.Payload;
@@ -75,6 +78,12 @@ public class OutgoingStateService {
 				if (response.getStatusCode().is2xxSuccessful()) {
 					log.trace("Reporting state of {} successful.", deviceIds);
 				} else {
+					if (log.isTraceEnabled())
+					{
+						try {
+							log.trace("Report body:\n {}", new ObjectMapper().writeValueAsString(request));
+						} catch (JsonProcessingException e1) {}
+					}
 					CallbackResponse responseBody = response.getBody();
 					if (responseBody == null) {
 						log.trace("Reporting state of {} unsucessful. HTTP Status Code: {}", deviceIds, response.getStatusCode());
@@ -84,6 +93,12 @@ public class OutgoingStateService {
 				}
 				
 			} catch (Exception e) {
+				if (log.isTraceEnabled())
+				{
+					try {
+						log.trace("Report body:\n {}", new ObjectMapper().writeValueAsString(request));
+					} catch (JsonProcessingException e1) {}
+				}
 				log.error("Error reporting state", e);
 			}
 

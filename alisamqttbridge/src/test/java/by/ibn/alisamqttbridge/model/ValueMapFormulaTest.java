@@ -1,6 +1,8 @@
 package by.ibn.alisamqttbridge.model;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
@@ -9,7 +11,6 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import by.ibn.alisamqttbridge.TestUtil;
-import by.ibn.alisamqttbridge.model.ValueMapFormula;
 
 class ValueMapFormulaTest {
 
@@ -20,6 +21,7 @@ class ValueMapFormulaTest {
 		
 		ValueMapFormula valueMap = new ObjectMapper().readerFor(ValueMapFormula.class).readValue(jsonString);
 		
+		assertFalse(valueMap.isApplicable(null));
 		assertFalse(valueMap.isApplicable("on"));
 		assertFalse(valueMap.isApplicable("cmd23"));
 		assertTrue(valueMap.isApplicable("1"));
