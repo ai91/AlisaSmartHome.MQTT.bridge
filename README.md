@@ -102,3 +102,6 @@ Resulting jar will be located at `alisamqttbridge\build\libs\`
 
 # Credits
 The project idea and *devices.json* rules/mappings were inspired by similar project [HomeAutio.Mqtt.GoogleHome](https://github.com/i8beef/HomeAutio.Mqtt.GoogleHome)
+
+[![Watch the video](https://img.youtube.com/vi/2UMcK2p4e1I/maxresdefault.jpg)](https://youtu.be/2UMcK2p4e1I)
+[![Watch the video](https://img.youtube.com/vi/p6C_MBKraxY/maxresdefault.jpg)](https://youtu.be/p6C_MBKraxY)
