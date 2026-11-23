@@ -24,6 +24,7 @@ jobs:
     env: 
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
       DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      BPE_APPEND_JAVA_TOOL_OPTIONS: "-XX:-UseBASE64Intrinsics"
     defaults:
       run:
         working-directory: ./alisamqttbridge
